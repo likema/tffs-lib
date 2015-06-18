@@ -1,55 +1,48 @@
 #
 # make file for tffs
-# 
+#
 # knightray@gmail.com
 # 10/27 2008
-#
 
-#
 # build target definiation.
-#
-LIB_TARGET=libtffs.a
-TEST_TARGET=tffs
-TSH_TARGET=tsh
+LIB_TARGET  := libtffs.a
+TEST_TARGET := test_tffs
+TSH_TARGET  := tsh
+TFFS_TARGET := tffs
 
-#
 # source file definiation
-#
-LIBSRC=src/hai_file.c src/initfs.c src/debug.c src/fat.c src/dir.c src/dirent.c src/common.c src/file.c src/crtdef.c src/cache.c
-TESTSRC=src/main.c
-TSHSRC=tshell/tsh.c
+LIBSRC      := src/hai_file.c src/initfs.c src/debug.c src/fat.c src/dir.c \
+	src/dirent.c src/common.c src/file.c src/crtdef.c src/cache.c
+TESTSRC     := src/main.c
+TSHSRC      := tshell/tsh.c
+TFFSSRC     := tshell/tffs.c
 
-#
 # object files definiation
-#
-LIBOBJ=$(LIBSRC:.c=.o)
-TESTOBJ=$(TESTSRC:.c=.o)
-TSHOBJ=$(TSHSRC:.c=.o)
+LIBOBJ      := $(LIBSRC:.c=.o)
+TESTOBJ     := $(TESTSRC:.c=.o)
+TSHOBJ      := $(TSHSRC:.c=.o)
+TFFSOBJ     := $(TFFSSRC:.c=.o)
 
-#
 # makefile parameters
-#
-CC=gcc
-CFLAGS=-Wall -g -I ./inc
-LFLAGS=
+CFLAGS      += -Wall -g -I inc
+LDFLAGS     += -L. -ltffs
 
-all:$(LIB_TARGET)
+all:$(LIB_TARGET) $(TSH_TARGET) $(TFFS_TARGET)
+
 test:$(TEST_TARGET)
 
-$(LIB_TARGET):$(LIBOBJ)
-	ar rcs $(LIB_TARGET) $(LIBOBJ)
-	#rm -fr src/*.o
+$(LIB_TARGET): $(LIBOBJ)
+	$(AR) rcs $@ $^
 
-$(TEST_TARGET):$(TESTOBJ)
-	$(CC) $(LFLAGS) -o $(TEST_TARGET) $(TESTOBJ) -L./ -ltffs
+$(TEST_TARGET): $(TESTOBJ)
+	$(CC) -o $@ $^ $(LDFLAGS)
 
-$(TSH_TARGET):$(TSHOBJ)
-	$(CC) $(LFLAGS) -o $(TSH_TARGET) $(TSHOBJ) -L./ -ltffs
+$(TSH_TARGET): $(TSHOBJ)
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+$(TFFS_TARGET): $(TFFSOBJ)
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 clean:
-	rm -f src/*.o
-	rm -f tshell/*.o
-	rm -f $(TEST_TARGET)
-	rm -f $(LIB_TARGET)
-	rm -f $(TSH_TARGET)
-
+	-$(RM) src/*.o tshell/*.o $(TEST_TARGET) $(LIB_TARGET) $(TSH_TARGET) \
+		$(TFFS_TARGET)
