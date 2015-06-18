@@ -50,7 +50,7 @@ _get_next_sec(
 
 /*----------------------------------------------------------------------------------------------------*/
 
-int32 
+int32
 TFFS_fopen(
 	IN	tffs_handle_t hfs,
 	IN	byte * file_path,
@@ -220,7 +220,7 @@ TFFS_fwrite(
 	while (written_size < buflen) {
 		uint32 write_once_size;
 
-		write_once_size = min(pfile->ptffs->pbs->byts_per_sec - pfile->cur_sec_offset, 
+		write_once_size = min(pfile->ptffs->pbs->byts_per_sec - pfile->cur_sec_offset,
 			buflen - written_size);
 
 		Memcpy(pfile->secbuf + pfile->cur_sec_offset, ptr + written_size,
@@ -231,11 +231,9 @@ TFFS_fwrite(
 		if (pfile->cur_sec_offset == pfile->ptffs->pbs->byts_per_sec) {
 			ret = file_write_sector(pfile);
 			if (ret == FILE_OK) {
-				if (buflen - written_size > 0) {
-					if ((ret = _get_next_sec(pfile)) != FILE_OK) {
-						ERR("%s(): get next sector failed at %d with ret = %d\n", __FUNCTION__, __LINE__, ret);
-						break;
-					}
+				if ((ret = _get_next_sec(pfile)) != FILE_OK) {
+					ERR("%s(): get next sector failed at %d with ret = %d\n", __FUNCTION__, __LINE__, ret);
+					break;
 				}
 				pfile->cur_sec_offset = 0;
 			}
@@ -286,11 +284,11 @@ TFFS_fread(
 
 		if (pfile->cur_sec_offset + (read_size - readin_size) >= pfile->ptffs->pbs->byts_per_sec) {
 
-			Memcpy(ptr + readin_size, pfile->secbuf + pfile->cur_sec_offset, 
+			Memcpy(ptr + readin_size, pfile->secbuf + pfile->cur_sec_offset,
 				pfile->ptffs->pbs->byts_per_sec - pfile->cur_sec_offset);
 			readin_size += pfile->ptffs->pbs->byts_per_sec - pfile->cur_sec_offset;
 
-			ret = file_read_sector(pfile); 
+			ret = file_read_sector(pfile);
 			if (ret == FILE_OK) {
 				pfile->cur_sec_offset = 0;
 				continue;
@@ -368,7 +366,7 @@ file_read_sector(
 	}
 	else {
 		if (fat_get_next_sec(ptffs->pfat, &pfile->cur_clus, &pfile->cur_sec)) {
-			if (cache_readsector(ptffs->pcache, clus2sec(ptffs, pfile->cur_clus) + pfile->cur_sec, 
+			if (cache_readsector(ptffs->pcache, clus2sec(ptffs, pfile->cur_clus) + pfile->cur_sec,
 					pfile->secbuf) == CACHE_OK) {
 				ret = FILE_OK;
 			}
@@ -450,7 +448,7 @@ _initialize_file(
 
 		_file_seek(pfile, pfile->cur_fp_offset);
 		if (pfile->cur_clus != 0) {
-			if (cache_readsector(ptffs->pcache, clus2sec(ptffs, pfile->cur_clus) + pfile->cur_sec, 
+			if (cache_readsector(ptffs->pcache, clus2sec(ptffs, pfile->cur_clus) + pfile->cur_sec,
 					pfile->secbuf) != CACHE_OK) {
 				ret = ERR_TFFS_DEVICE_FAIL;
 			}
@@ -475,7 +473,7 @@ _initialize_file(
 	}
 	else {
 		if (pfile->cur_clus != 0) {
-			if (cache_readsector(ptffs->pcache, clus2sec(ptffs, pfile->cur_clus) + pfile->cur_sec, 
+			if (cache_readsector(ptffs->pcache, clus2sec(ptffs, pfile->cur_clus) + pfile->cur_sec,
 					pfile->secbuf) != CACHE_OK) {
 				ret = ERR_TFFS_DEVICE_FAIL;
 			}
