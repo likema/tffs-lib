@@ -34,13 +34,13 @@ test:$(TEST_TARGET)
 $(LIB_TARGET): $(LIBOBJ)
 	$(AR) rcs $@ $^
 
-$(TEST_TARGET): $(TESTOBJ)
+$(TEST_TARGET): $(TESTOBJ) $(LIB_TARGET)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-$(TSH_TARGET): $(TSHOBJ)
+$(TSH_TARGET): $(TSHOBJ) $(LIB_TARGET)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-$(TFFS_TARGET): $(TFFSOBJ)
+$(TFFS_TARGET): $(TFFSOBJ) $(LIB_TARGET)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 clean:
