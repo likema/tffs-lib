@@ -18,7 +18,7 @@ char * errmsg[] = {
 	"Invalid open mode.",					//ERR_TFFS_INVALID_OPENMODE
 	"File is not exist.",					//ERR_TFFS_FILE_NOT_EXIST
 	"Open file failed.",					//ERR_TFFS_FILE_OPEN_FAIL
-	"No free disk space.",					//ERR_TFFS_NO_FREE_SPACE 
+	"No free disk space.",					//ERR_TFFS_NO_FREE_SPACE
 	"Try to write a readonly file.",		//ERR_TFFS_READONLY
 	"Reached the end of the file.", 		//ERR_TFFS_FILE_EOF
 	"Access fat table error.",				//ERR_TFFS_FAT
@@ -53,7 +53,7 @@ main(
 		return -1;
 	}
 
-	if ((ret = TFFS_mount(argv[1], &htffs)) != TFFS_OK) {
+	if ((ret = TFFS_mount(argv[1], 0, &htffs)) != TFFS_OK) {
 		print_error("TFFS_mount", ret);
 		return -1;
 	}
@@ -456,7 +456,7 @@ do_cat(
 #undef BUF_SIZE
 }
 
-char * 
+char *
 _get_input()
 {
 #define BUF_SIZE	4096

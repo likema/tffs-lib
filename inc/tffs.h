@@ -80,6 +80,7 @@ typedef struct _dirent {
 int32
 TFFS_mount(
 	IN	byte * dev,
+	IN  int32 offset,
 	OUT	tffs_handle_t * phtffs
 );
 
@@ -101,7 +102,7 @@ TFFS_closedir(
 	IN	tdir_handle_t hdir
 );
 
-int32 
+int32
 TFFS_fopen(
 	IN	tffs_handle_t hfs,
 	IN	byte * file_path,

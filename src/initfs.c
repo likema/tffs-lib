@@ -23,6 +23,7 @@
 int32
 TFFS_mount(
     IN  byte * dev,
+	IN  int32 offset,
     OUT tffs_handle_t * phtffs)
 {
 	int32 ret;
@@ -45,8 +46,9 @@ TFFS_mount(
 	Memset(pbs, 0, sizeof(boot_sector_t));
 	
 	ASSERT(sizeof(boot_sector_t) == 512);
+	ASSERT(offset % sizeof(boot_sector_t) == 0);
 	
-	hdev = HAI_initdevice(dev, 512);
+	hdev = HAI_initdevice(dev, 512, offset);
 	if (hdev == NULL) {
 		ret = ERR_TFFS_DEVICE_FAIL;
 		goto _release;

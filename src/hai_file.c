@@ -18,7 +18,8 @@
 tdev_handle_t
 HAI_initdevice(
 	IN	byte * dev,
-	IN	int16 sector_size)
+	IN	int16 sector_size,
+	IN  int32 offset)
 {
 	int fd;
 	tdev_t * pdev;
@@ -29,6 +30,7 @@ HAI_initdevice(
 	pdev = (tdev_t *)malloc(sizeof(tdev_t));
 	pdev->fd = fd;
 	pdev->sector_size = sector_size;
+	pdev->offset = offset;
 
 	return (tdev_handle_t)pdev;
 }
@@ -44,7 +46,7 @@ HAI_readsector(
 	if (!ptr || !pdev || pdev->fd <= 0)
 		return ERR_HAI_INVALID_PARAMETER;
 
-	if (lseek(pdev->fd, addr * pdev->sector_size, SEEK_SET) < 0)
+	if (lseek(pdev->fd, pdev->offset + addr * pdev->sector_size, SEEK_SET) < 0)
 		return ERR_HAI_READ;
 
 	if (read(pdev->fd, ptr, pdev->sector_size) < 0)
@@ -64,7 +66,7 @@ HAI_writesector(
 	if (!ptr || !pdev || pdev->fd <= 0)
 		return ERR_HAI_INVALID_PARAMETER;
 	
-	if (lseek(pdev->fd, addr * pdev->sector_size, SEEK_SET) < 0)
+	if (lseek(pdev->fd, pdev->offset + addr * pdev->sector_size, SEEK_SET) < 0)
 		return ERR_HAI_WRITE;
 
 	if (write(pdev->fd, ptr, pdev->sector_size) < 0)

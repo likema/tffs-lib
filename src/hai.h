@@ -37,7 +37,8 @@ typedef struct {} *tdev_handle_t;
 tdev_handle_t
 HAI_initdevice(
 	IN	byte * dev,
-	IN	int16 sector_size
+	IN	int16 sector_size,
+	IN  int32 offset
 );
 
 /*

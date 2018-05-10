@@ -16,6 +16,7 @@
 typedef struct _tdev{
 	int fd;
 	int16 sector_size;
+	int32 offset;
 }tdev_t;
 
 #endif

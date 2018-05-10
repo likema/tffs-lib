@@ -74,26 +74,47 @@ int main(int argc, char* argv[])
     int res = EXIT_SUCCESS;
     tffs_handle_t htffs;
     int32 rc;
-    int i;
+    int i = 0, k = 1;
+    int32 offset = 0;
 
     if (argc < 3) {
-        fprintf(stderr, "Usage: ttfs <image name> <cmd>\n");
+        fprintf(stderr, "Usage: tffs [-t <offset>] <image name> <cmd>\n");
         return EXIT_FAILURE;
     }
 
-    if ((rc = TFFS_mount(argv[1], &htffs)) != TFFS_OK) {
+    if (*argv[k] == '-') {
+        switch (argv[k][1]) {
+        case 't': /* -t <offset> */
+            if (argv[k][2]) {
+                if (isdigit(argv[k][2])) {
+                    offset = (int32) strtoull(argv[k] + 2, 0, 10);
+                    ++k;
+                }
+            } else if (isdigit(*argv[k + 1])) {
+                offset = (int32) strtoull(argv[++k], 0, 10);
+                ++k;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
+    if ((rc = TFFS_mount(argv[k], offset, &htffs)) != TFFS_OK) {
         print_error("TFFS_mount", rc);
         return EXIT_FAILURE;
     }
 
-    for (i = 0; i < CHS_NUM && strcmp(chs[i].cmd, argv[2]); ++i)
+    ++k;
+    for (; i < CHS_NUM && strcmp(chs[i].cmd, argv[k]); ++i)
         ;
 
+    ++k;
     if (i == CHS_NUM) {
         fprintf(stderr, "Invalid command.\n");
         res = EXIT_FAILURE;
     } else {
-        res = chs[i].handler(htffs, argc - 3, argv + 3) < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+        res = chs[i].handler(htffs, argc - k, argv + k) < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
     }
 
     if ((rc = TFFS_umount(htffs)) != TFFS_OK) {
