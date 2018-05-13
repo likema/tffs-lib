@@ -46,10 +46,7 @@ HAI_readsector(
 	if (!ptr || !pdev || pdev->fd <= 0)
 		return ERR_HAI_INVALID_PARAMETER;
 
-	if (lseek(pdev->fd, pdev->offset + addr * pdev->sector_size, SEEK_SET) < 0)
-		return ERR_HAI_READ;
-
-	if (read(pdev->fd, ptr, pdev->sector_size) < 0)
+	if (pread(pdev->fd, ptr, pdev->sector_size, pdev->offset + addr * pdev->sector_size) < 0)
 		return ERR_HAI_READ;
 
 	return HAI_OK;
@@ -66,10 +63,7 @@ HAI_writesector(
 	if (!ptr || !pdev || pdev->fd <= 0)
 		return ERR_HAI_INVALID_PARAMETER;
 	
-	if (lseek(pdev->fd, pdev->offset + addr * pdev->sector_size, SEEK_SET) < 0)
-		return ERR_HAI_WRITE;
-
-	if (write(pdev->fd, ptr, pdev->sector_size) < 0)
+	if (pwrite(pdev->fd, ptr, pdev->sector_size, pdev->offset + addr * pdev->sector_size) < 0)
 		return ERR_HAI_WRITE;
 
 	return HAI_OK;
