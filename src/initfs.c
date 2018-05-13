@@ -156,12 +156,12 @@ int32
 _validate_bs(
 	IN	boot_sector_t * pbs)
 {
-	INFO("=================Boot sector====================\n");
-	INFO("oem_name: %s\n", pbs->oem_name);
-	INFO("byts_per_sec: %d\n", pbs->byts_per_sec);
-	INFO("resvd_sec_cnt: %d\n", pbs->resvd_sec_cnt);
-	INFO("sec_per_clus: %d\n", pbs->sec_per_clus);
-	INFO("================================================\n");
+	DBG("=================Boot sector====================\n");
+	DBG("oem_name: %s\n", pbs->oem_name);
+	DBG("byts_per_sec: %d\n", pbs->byts_per_sec);
+	DBG("resvd_sec_cnt: %d\n", pbs->resvd_sec_cnt);
+	DBG("sec_per_clus: %d\n", pbs->sec_per_clus);
+	DBG("================================================\n");
 	return TRUE;
 }
 

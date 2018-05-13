@@ -19,7 +19,7 @@
 //#define DBG_FILE
 #define DBG_INITFS
 
-#define DBG 	printf
+#define DBG 	nulldbg
 #define WARN	printf
 #define ERR		printf
 #define INFO 	printf
