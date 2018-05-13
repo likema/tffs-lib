@@ -182,15 +182,18 @@ int do_ls(tffs_handle_t htffs, int argc, char* argv[])
 int do_mkdir(tffs_handle_t htffs, int argc, char* argv[])
 {
     int32 rc;
+    int i = 0;
 
-    if (argc != 1) {
-        fprintf(stderr, "Usage: mkdir <directory>\n");
+    if (argc < 1) {
+        fprintf(stderr, "Usage: mkdir <directory> [<directory ...]\n");
         return -1;
     }
 
-    if ((rc = TFFS_mkdir(htffs, *argv)) != TFFS_OK) {
-        print_error("TFFS_mkdir", rc);
-        return -1;
+    for (; i < argc; ++i) {
+        if ((rc = TFFS_mkdir(htffs, argv[i])) != TFFS_OK) {
+            print_error("TFFS_mkdir", rc);
+            return -1;
+        }
     }
 
     return 0;
