@@ -35,13 +35,13 @@ $(LIB_TARGET): $(LIBOBJ)
 	$(AR) rcs $@ $^
 
 $(TEST_TARGET): $(TESTOBJ) $(LIB_TARGET)
-	$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(TSH_TARGET): $(TSHOBJ) $(LIB_TARGET)
-	$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(TFFS_TARGET): $(TFFSOBJ) $(LIB_TARGET)
-	$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
 	-$(RM) src/*.o tshell/*.o $(TEST_TARGET) $(LIB_TARGET) $(TSH_TARGET) \

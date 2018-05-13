@@ -72,7 +72,6 @@ HAI_writesector(
 	if (write(pdev->fd, ptr, pdev->sector_size) < 0)
 		return ERR_HAI_WRITE;
 
-	fsync(pdev->fd);
 	return HAI_OK;
 }
 
