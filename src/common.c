@@ -94,8 +94,8 @@ dup_string(
 {
 	byte * pret;
 
-	pret = (byte *)Malloc(Strlen(pstr) + 1);
-	Strcpy(pret, pstr);
+	pret = (byte *)malloc(strlen(pstr) + 1);
+	strcpy(pret, pstr);
 
 	return pret;
 }
@@ -126,11 +126,11 @@ divide_path(
 {
 	byte * pcur;
 
-	pcur = file_path + Strlen(file_path);
+	pcur = file_path + strlen(file_path);
 	while (pcur >= file_path && *pcur != '/')
 		pcur--;
 	
-	Strcpy(pfname, pcur + 1);
+	strcpy(pfname, pcur + 1);
 	*(pcur + 1) = '\0';
 
 	return TRUE;

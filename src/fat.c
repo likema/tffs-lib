@@ -81,10 +81,10 @@ fat_init(
 	tfat_t * pfat;
 
 	ASSERT(ptffs);
-	pfat = (tfat_t *)Malloc(sizeof(tfat_t));
+	pfat = (tfat_t *)malloc(sizeof(tfat_t));
 	pfat->ptffs = ptffs;
     pfat->last_free_clus = 0;
-    pfat->secbuf = (ubyte *)Malloc(ptffs->pbs->byts_per_sec * 2);
+    pfat->secbuf = (ubyte *)malloc(ptffs->pbs->byts_per_sec * 2);
 
 	return pfat;
 }
@@ -93,8 +93,8 @@ void
 fat_destroy(
 	IN	tfat_t * pfat)
 {
-	Free(pfat->secbuf);
-	Free(pfat);
+	free(pfat->secbuf);
+	free(pfat);
 }
 
 int32

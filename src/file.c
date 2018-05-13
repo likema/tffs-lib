@@ -69,12 +69,12 @@ TFFS_fopen(
 		return ERR_TFFS_INVALID_PARAM;
 
 	ret = TFFS_OK;
-	pfile = (tfile_t *)Malloc(sizeof(tfile_t));
+	pfile = (tfile_t *)malloc(sizeof(tfile_t));
 	dup_file_path = dup_string(file_path);
 	pdir_entry = dirent_malloc();
-	fname = (byte *)Malloc(DNAME_MAX);
-	pfile->secbuf = (ubyte *)Malloc(ptffs->pbs->byts_per_sec);
-	Memset(pfile->secbuf, 0, ptffs->pbs->byts_per_sec);
+	fname = (byte *)malloc(DNAME_MAX);
+	pfile->secbuf = (ubyte *)malloc(ptffs->pbs->byts_per_sec);
+	memset(pfile->secbuf, 0, ptffs->pbs->byts_per_sec);
 
 	path = dup_file_path;
 	if (!divide_path(dup_file_path, fname)) {
@@ -122,8 +122,8 @@ TFFS_fopen(
 	}
 
 _release:
-	Free(fname);
-	Free(dup_file_path);
+	free(fname);
+	free(dup_file_path);
 	return ret;
 }
 
@@ -146,7 +146,7 @@ TFFS_rmfile(
 	
     ptffs = (tffs_t *)hfs;
     dup_file_path = dup_string(file_path);
-    fname = (byte *)Malloc(DNAME_MAX);
+    fname = (byte *)malloc(DNAME_MAX);
 	pdir_entry = dirent_malloc();
 
     path = dup_file_path;
@@ -184,8 +184,8 @@ TFFS_rmfile(
     }
 
 _release:
-	Free(fname);
-	Free(dup_file_path);
+	free(fname);
+	free(dup_file_path);
 	dirent_release(pdir_entry);
 	dir_destroy(pdir);
 	return ret;
@@ -199,10 +199,7 @@ TFFS_fwrite(
 {
 	tfile_t * pfile = (tfile_t *)hfile;
 	tdir_entry_t * pdir_entry;
-	tdir_t * pdir;
-	uint32 write_size;
-	uint32 written_size;
-	uint32 file_size;
+	uint32 written_size = 0;
 	int32 ret;
 
 	if (!hfile || !ptr)
@@ -211,19 +208,14 @@ TFFS_fwrite(
 	if (pfile->open_mode == OPENMODE_READONLY)
 		return ERR_TFFS_READONLY;
 
-	pdir = pfile->pdir;
 	pdir_entry = pfile->pdir_entry;
-	file_size = dirent_get_file_size(pdir_entry);
-	write_size = buflen;
-	written_size = 0;
-
 	while (written_size < buflen) {
 		uint32 write_once_size;
 
 		write_once_size = min(pfile->ptffs->pbs->byts_per_sec - pfile->cur_sec_offset,
 			buflen - written_size);
 
-		Memcpy(pfile->secbuf + pfile->cur_sec_offset, ptr + written_size,
+		memcpy(pfile->secbuf + pfile->cur_sec_offset, ptr + written_size,
 			write_once_size);
 		written_size += write_once_size;
 		pfile->cur_sec_offset += write_once_size;
@@ -265,7 +257,6 @@ TFFS_fread(
 {
 	tfile_t * pfile = (tfile_t *)hfile;
 	tdir_entry_t * pdir_entry;
-	tdir_t * pdir;
 	uint32 read_size;
 	uint32 readin_size;
 	uint32 file_size;
@@ -274,7 +265,6 @@ TFFS_fread(
 	if (!hfile || !ptr)
 		return ERR_TFFS_INVALID_PARAM;
 
-	pdir = pfile->pdir;
 	pdir_entry = pfile->pdir_entry;
 	file_size = dirent_get_file_size(pdir_entry);
 	read_size = min(buflen, file_size - pfile->cur_fp_offset);
@@ -284,7 +274,7 @@ TFFS_fread(
 
 		if (pfile->cur_sec_offset + (read_size - readin_size) >= pfile->ptffs->pbs->byts_per_sec) {
 
-			Memcpy(ptr + readin_size, pfile->secbuf + pfile->cur_sec_offset,
+			memcpy(ptr + readin_size, pfile->secbuf + pfile->cur_sec_offset,
 				pfile->ptffs->pbs->byts_per_sec - pfile->cur_sec_offset);
 			readin_size += pfile->ptffs->pbs->byts_per_sec - pfile->cur_sec_offset;
 
@@ -304,7 +294,7 @@ TFFS_fread(
 			}
 		}
 		else {
-			Memcpy(ptr + readin_size, pfile->secbuf + pfile->cur_sec_offset,
+			memcpy(ptr + readin_size, pfile->secbuf + pfile->cur_sec_offset,
 				read_size - readin_size);
 			pfile->cur_sec_offset += (read_size - readin_size);
 			readin_size += (read_size - readin_size);
@@ -346,8 +336,8 @@ TFFS_fclose(
 
 	dir_destroy(pfile->pdir);
 	dirent_release(pfile->pdir_entry);
-	Free(pfile->secbuf);
-	Free(pfile);
+	free(pfile->secbuf);
+	free(pfile);
 
 	return ret;
 }
@@ -534,13 +524,13 @@ _parse_open_mode(
 	IN	byte * open_mode,
 	OUT	uint32 * popen_mode)
 {
-	if (!Strcmp(open_mode, "r")) {
+	if (!strcmp(open_mode, "r")) {
 		*popen_mode = OPENMODE_READONLY;
 	}
-	else if (!Strcmp(open_mode, "w")) {
+	else if (!strcmp(open_mode, "w")) {
 		*popen_mode = OPENMODE_WRITE;
 	}
-	else if (!Strcmp(open_mode, "a")) {
+	else if (!strcmp(open_mode, "a")) {
 		*popen_mode = OPENMODE_APPEND;
 	}
 	else {

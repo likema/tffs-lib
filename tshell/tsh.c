@@ -524,7 +524,7 @@ do_write(
 	}
 
 	printf("\n============================================================\n");
-	printf("wrote %d bytes to file %s ok.\n", strlen(buf), dir);
+	printf("wrote %zu bytes to file %s ok.\n", strlen(buf), dir);
 	free(buf);
 }
 

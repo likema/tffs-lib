@@ -90,11 +90,11 @@ dirent_find(
 				continue;
 			}
 
-			Memset(pdir_entry->long_name, 0, LONG_NAME_LEN);
-			Memset(pdir_entry->short_name, 0, SHORT_NAME_LEN);
+			memset(pdir_entry->long_name, 0, LONG_NAME_LEN);
+			memset(pdir_entry->short_name, 0, SHORT_NAME_LEN);
 			_parse_file_name(pdir, &dirent, pdir_entry);
 
-			if (!Strcmp(pdir_entry->long_name, dirname)) {
+			if (!strcmp(pdir_entry->long_name, dirname)) {
 				break;
 			}
 		}
@@ -140,11 +140,11 @@ dirent_is_empty(
 				continue;
 			}
 
-			Memset(pdir_entry->long_name, 0, LONG_NAME_LEN);
-			Memset(pdir_entry->short_name, 0, SHORT_NAME_LEN);
+			memset(pdir_entry->long_name, 0, LONG_NAME_LEN);
+			memset(pdir_entry->short_name, 0, SHORT_NAME_LEN);
 			_parse_file_name(pdir, &dirent, pdir_entry);
 
-			if (!Strcmp(pdir_entry->long_name, ".") || !Strcmp(pdir_entry->long_name, "..")) {
+			if (!strcmp(pdir_entry->long_name, ".") || !strcmp(pdir_entry->long_name, "..")) {
 				continue;
 			}
 			else {
@@ -246,8 +246,8 @@ dirent_get_next(
 				continue;
 			}
 
-			Memset(pdir_entry->long_name, 0, LONG_NAME_LEN);
-			Memset(pdir_entry->short_name, 0, SHORT_NAME_LEN);
+			memset(pdir_entry->long_name, 0, LONG_NAME_LEN);
+			memset(pdir_entry->short_name, 0, SHORT_NAME_LEN);
 			_parse_file_name(pdir, &dirent, pdir_entry); 
 
 			break;
@@ -263,8 +263,8 @@ void
 dirent_release(
 	IN	tdir_entry_t * pdir_entry)
 {
-	Free(pdir_entry->pdirent);
-	Free(pdir_entry);
+	free(pdir_entry->pdirent);
+	free(pdir_entry);
 }
 
 tdir_entry_t *
@@ -272,8 +272,8 @@ dirent_malloc()
 {
 	tdir_entry_t * pdir_entry;
 
-	pdir_entry = (tdir_entry_t *)Malloc(sizeof(tdir_entry_t));
-	Memset(pdir_entry, 0, sizeof(tdir_entry_t));
+	pdir_entry = (tdir_entry_t *)malloc(sizeof(tdir_entry_t));
+	memset(pdir_entry, 0, sizeof(tdir_entry_t));
 	return pdir_entry;
 }
 
@@ -290,12 +290,12 @@ dirent_init(
 	int32 lfent_i;
 	byte * pfname;
 
-	if (Strlen(fname) > LONG_NAME_LEN ||
-		(!use_long_name && Strlen(fname) > SHORT_NAME_LEN))
+	if (strlen(fname) > LONG_NAME_LEN ||
+		(!use_long_name && strlen(fname) > SHORT_NAME_LEN))
 		return FALSE;
 
 	if (use_long_name) {
-		lfent_num = Strlen(fname) / 13 + 2;
+		lfent_num = strlen(fname) / 13 + 2;
 	}
 	else {
 		lfent_num = 1;
@@ -303,8 +303,8 @@ dirent_init(
 
 	pfname = fname;
 
-	plfent = (long_dir_entry_t *)Malloc(sizeof(long_dir_entry_t) * lfent_num);
-	Memset(plfent, 0, sizeof(long_dir_entry_t) * lfent_num);
+	plfent = (long_dir_entry_t *)malloc(sizeof(long_dir_entry_t) * lfent_num);
+	memset(plfent, 0, sizeof(long_dir_entry_t) * lfent_num);
 	pdirent = (dir_entry_t *)(&plfent[lfent_num - 1]);
 	
 	_convert_to_short_fname(fname, pdirent->dir_name);
@@ -325,8 +325,8 @@ dirent_init(
 		for (lfent_i = lfent_num - 2; lfent_i >= 0; lfent_i--) {
 			ubyte fname_line[13];
 
-			Memset(fname_line, 0xFF, 13);
-			Memcpy(fname_line, pfname, min(fname + Strlen(fname) - pfname + 1, 13));
+			memset(fname_line, 0xFF, 13);
+			memcpy(fname_line, pfname, min(fname + strlen(fname) - pfname + 1, 13));
 
 			if (lfent_i == 0) {
 				plfent[lfent_i].ldir_ord = (lfent_num - 1 - lfent_i) | LAST_LONG_ENTRY;
@@ -348,7 +348,7 @@ dirent_init(
 
 	pdir_entry->pdirent = (dir_entry_t *)plfent;
 	pdir_entry->dirent_num = lfent_num;
-	Strcpy(pdir_entry->long_name, fname);	
+	strcpy(pdir_entry->long_name, fname);	
 	_convert_short_fname(pdirent->dir_name, pdir_entry->short_name);
 
 	return TRUE;
@@ -411,14 +411,14 @@ _get_dirent(
 	
 	if (pdir->cur_dir_entry < 
 			(pdir->ptffs->pbs->byts_per_sec / sizeof(dir_entry_t))) {
-		Memcpy(pdirent, (dir_entry_t *)pdir->secbuf + pdir->cur_dir_entry, sizeof(dir_entry_t));
+		memcpy(pdirent, (dir_entry_t *)pdir->secbuf + pdir->cur_dir_entry, sizeof(dir_entry_t));
 		pdir->cur_dir_entry++;
 	}
 	else {
 		if (fat_get_next_sec(pdir->ptffs->pfat, &pdir->cur_clus, &pdir->cur_sec)) {
 			pdir->cur_dir_entry = 0;
 			if ((ret = dir_read_sector(pdir)) == DIR_OK) {
-				Memcpy(pdirent, (dir_entry_t *)pdir->secbuf + pdir->cur_dir_entry, sizeof(dir_entry_t));
+				memcpy(pdirent, (dir_entry_t *)pdir->secbuf + pdir->cur_dir_entry, sizeof(dir_entry_t));
 				pdir->cur_dir_entry++;
 			}
 			else {
@@ -447,25 +447,25 @@ _parse_file_name(
 		dir_entry_t dirent;
 
 		lf_entry_num = pdirent->dir_name[0] & ~(LAST_LONG_ENTRY);
-		pdir_entry->pdirent = (dir_entry_t *)Malloc((lf_entry_num + 1) * sizeof(dir_entry_t));
+		pdir_entry->pdirent = (dir_entry_t *)malloc((lf_entry_num + 1) * sizeof(dir_entry_t));
 
 		_get_long_file_name(pdirent, pdir_entry->long_name + (lf_entry_num - 1) * 13);
-		Memcpy(pdir_entry->pdirent, pdirent, sizeof(dir_entry_t));
+		memcpy(pdir_entry->pdirent, pdirent, sizeof(dir_entry_t));
 
 		for (lf_i = 1; lf_i < lf_entry_num; lf_i++) {
 			_get_dirent(pdir, &dirent);
-			Memcpy(pdir_entry->pdirent + lf_i, &dirent, sizeof(dir_entry_t));
+			memcpy(pdir_entry->pdirent + lf_i, &dirent, sizeof(dir_entry_t));
 			_get_long_file_name(&dirent, pdir_entry->long_name + (lf_entry_num - lf_i - 1) * 13);
 		}
 
 		_get_dirent(pdir, &dirent);
-		Memcpy(pdir_entry->pdirent + lf_i, &dirent, sizeof(dir_entry_t));
+		memcpy(pdir_entry->pdirent + lf_i, &dirent, sizeof(dir_entry_t));
 	}
 	else {
-		pdir_entry->pdirent = (dir_entry_t *)Malloc(sizeof(dir_entry_t));
+		pdir_entry->pdirent = (dir_entry_t *)malloc(sizeof(dir_entry_t));
 
 		_convert_short_fname(pdirent->dir_name, pdir_entry->long_name);
-		Memcpy(pdir_entry->pdirent, pdirent, sizeof(dir_entry_t));
+		memcpy(pdir_entry->pdirent, pdirent, sizeof(dir_entry_t));
 	}
 
 	_convert_short_fname(pdirent->dir_name, pdir_entry->short_name);
@@ -500,8 +500,8 @@ _convert_to_short_fname(
 		short_fname[sf_i] = ' ';
 
 	/* FixMe! . and .. can not handle probably  */
-	if (!Strcmp(fname, ".") || !Strcmp(fname, "..")) {
-		Strcpy((byte *)short_fname, fname);
+	if (!strcmp(fname, ".") || !strcmp(fname, "..")) {
+		strcpy((byte *)short_fname, fname);
 		return TRUE;
 	}		
 
@@ -515,7 +515,7 @@ _convert_to_short_fname(
 		if (*pcur == '\0' || *pcur == '.') {
 			break;
 		}
-		short_fname[sf_i++] = Toupper(*pcur++);
+		short_fname[sf_i++] = toupper(*pcur++);
 	}
 
 	if (*pcur == '.') {
@@ -531,8 +531,8 @@ _convert_to_short_fname(
 			if (*pcur == '.')
 				pcur++;
 		
-			Sprintf(str_tail, "~%d", num_tail++);
-			Memcpy(short_fname + (8 - Strlen(str_tail)), str_tail, Strlen(str_tail));
+			sprintf(str_tail, "~%d", num_tail++);
+			memcpy(short_fname + (8 - strlen(str_tail)), str_tail, strlen(str_tail));
 
 			if (*pcur == '\0')
 				goto _release;
@@ -544,11 +544,11 @@ _convert_to_short_fname(
 	while (sf_i < 11) {
 		if (*pcur == '\0')
 			break;
-		short_fname[sf_i++] = Toupper(*pcur++);
+		short_fname[sf_i++] = toupper(*pcur++);
 	}
 
 _release:
-	Free(pfname);
+	free(pfname);
 	return TRUE;
 }
 
@@ -574,7 +574,7 @@ _convert_short_fname(
 {
 	uint32 i;
 
-	Memset(d_name, 0, 11);
+	memset(d_name, 0, 11);
 	for (i = 0; i < 8; i++) {
 		if (dir_name[i] == ' ')
 			break;

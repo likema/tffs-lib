@@ -71,20 +71,20 @@ cache_init(
 	tcache_t * pcache;
 	int16 seci;
 
-	pcache = (tcache_t *)Malloc(sizeof(tcache_t));
+	pcache = (tcache_t *)malloc(sizeof(tcache_t));
 	pcache->seccnt = seccnt;
 	pcache->hdev = hdev;
 	pcache->sector_size = sector_size;
 	if (seccnt > 0) {
-		pcache->secbufs = (sec_buf_t *)Malloc(sizeof(sec_buf_t) * seccnt);
+		pcache->secbufs = (sec_buf_t *)malloc(sizeof(sec_buf_t) * seccnt);
 		if (pcache->secbufs == NULL) {
-			Free(pcache);
+			free(pcache);
 			return NULL;
 		}
 
-		Memset(pcache->secbufs, 0, sizeof(sec_buf_t) * seccnt);
+		memset(pcache->secbufs, 0, sizeof(sec_buf_t) * seccnt);
 		for (seci = 0; seci < pcache->seccnt; seci++) {
-			pcache->secbufs[seci].secbuf = (ubyte *)Malloc(pcache->sector_size);
+			pcache->secbufs[seci].secbuf = (ubyte *)malloc(pcache->sector_size);
 			pcache->secbufs[seci].sec = 0;
 		}
 		pcache->head = SECBUF_EOF;
@@ -124,7 +124,7 @@ cache_readsector(
 	}
 
 	if (ret >= 0) {
-		Memcpy(ptr, pcache->secbufs[secindex].secbuf, pcache->sector_size);
+		memcpy(ptr, pcache->secbufs[secindex].secbuf, pcache->sector_size);
 	}
 
 	return ret;
@@ -155,7 +155,7 @@ cache_writesector(
 	}
 
 	if (ret >= 0) {
-		Memcpy(pcache->secbufs[secindex].secbuf, ptr, pcache->sector_size);
+		memcpy(pcache->secbufs[secindex].secbuf, ptr, pcache->sector_size);
 		pcache->secbufs[secindex].is_dirty = 1;
 	}
 
@@ -183,13 +183,13 @@ cache_destroy(
 		}
 
 		for (seci = 0; seci < pcache->seccnt; seci++) {
-			Free(pcache->secbufs[seci].secbuf);
+			free(pcache->secbufs[seci].secbuf);
 		}
 
-		Free(pcache->secbufs);
+		free(pcache->secbufs);
 	}
 
-	Free(pcache);
+	free(pcache);
 	
 	return ret;
 }

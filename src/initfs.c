@@ -40,10 +40,10 @@ TFFS_mount(
 		return ERR_TFFS_INVALID_PARAM;
 
 	ret = TFFS_OK;
-	tffs = (tffs_t *)Malloc(sizeof(tffs_t));
-	Memset(tffs, 0, sizeof(tffs_t));
-	pbs = (boot_sector_t *)Malloc(sizeof(boot_sector_t));
-	Memset(pbs, 0, sizeof(boot_sector_t));
+	tffs = (tffs_t *)malloc(sizeof(tffs_t));
+	memset(tffs, 0, sizeof(tffs_t));
+	pbs = (boot_sector_t *)malloc(sizeof(boot_sector_t));
+	memset(pbs, 0, sizeof(boot_sector_t));
 	
 	ASSERT(sizeof(boot_sector_t) == 512);
 	ASSERT(offset % sizeof(boot_sector_t) == 0);
@@ -110,8 +110,8 @@ _release:
 		dir_destroy(pcur_dir);
 	if (HAI_closedevice(tffs->hdev) != HAI_OK)
 		ret = ERR_TFFS_DEVICE_FAIL;
-	Free(pbs);
-	Free(tffs);
+	free(pbs);
+	free(tffs);
 
 	return ret;
 }
@@ -130,7 +130,7 @@ TFFS_umount(
 	ret = TFFS_OK;
 
 	if (ptffs->pbs)
-		Free(ptffs->pbs);
+		free(ptffs->pbs);
 
 	if (ptffs->pfat)
 		fat_destroy(ptffs->pfat);
@@ -147,7 +147,7 @@ TFFS_umount(
 	if (ret > 0 && (HAI_closedevice(ptffs->hdev) != HAI_OK))
 		ret = ERR_TFFS_DEVICE_FAIL;
 
-	Free(ptffs);
+	free(ptffs);
 
 	return ret;
 }

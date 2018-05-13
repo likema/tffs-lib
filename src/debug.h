@@ -3,7 +3,7 @@
  *
  * debug functions
  * head file
- * 
+ *
  * knightray@gmail.com
  * 10/28 2008
  */
@@ -30,6 +30,6 @@
 					}
 
 void print_sector(ubyte * secbuf, ubyte bychar);
-inline void nulldbg(char * fmt, ...);
+void nulldbg(char * fmt, ...);
 
 #endif

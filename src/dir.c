@@ -92,8 +92,8 @@ TFFS_readdir(
 
 		de_ret = dirent_get_next(pdir, pdir_entry);		
 		if (de_ret == DIRENTRY_OK) {
-			Strcpy(pdirent->d_name, pdir_entry->long_name);
-			Strcpy(pdirent->d_name_short, pdir_entry->short_name);
+			strcpy(pdirent->d_name, pdir_entry->long_name);
+			strcpy(pdirent->d_name_short, pdir_entry->short_name);
 
 			pdirent->dir_attr = dirent_get_dir_attr(pdir_entry);
 			pdirent->dir_file_size = dirent_get_file_size(pdir_entry);
@@ -155,7 +155,7 @@ TFFS_mkdir(
 	ret = TFFS_OK;
 	ptffs = (tffs_t *)hfs;
 	dup_dir_path = dup_string(dir_path);
-	dirname = (byte *)Malloc(DNAME_MAX);
+	dirname = (byte *)malloc(DNAME_MAX);
 	pdir_entry = dirent_malloc();
 		
     path = dup_dir_path;
@@ -199,8 +199,8 @@ TFFS_mkdir(
 _release:
 	if (pdir)
 		dir_destroy(pdir);
-	Free(dirname);
-	Free(dup_dir_path);
+	free(dirname);
+	free(dup_dir_path);
 	dirent_release(pdir_entry);
 	return ret;
 }
@@ -245,12 +245,12 @@ TFFS_rmdir(
 
 	ret = TFFS_OK;
 
-    if (!hfs || !dir_path || !Strcmp(dir_path, "/"))
+    if (!hfs || !dir_path || !strcmp(dir_path, "/"))
         return ERR_TFFS_INVALID_PARAM;
 	
     ptffs = (tffs_t *)hfs;
     dup_dir_path = dup_string(dir_path);
-    dirname = (byte *)Malloc(DNAME_MAX);
+    dirname = (byte *)malloc(DNAME_MAX);
 	pdir_entry = dirent_malloc();
 
     path = dup_dir_path;
@@ -303,8 +303,8 @@ _release3:
 _release2:
 	dir_destroy(pdir);
 _release1:
-	Free(dirname);
-	Free(dup_dir_path);
+	free(dirname);
+	free(dup_dir_path);
 	dirent_release(pdir_entry);
 	return ret;
 }
@@ -414,7 +414,7 @@ dir_append_direntry(
 		if (pdirent->dir_name[0] == 0x00) {
 			int32 di;
 
-			Memcpy(pdirent,	pdir_entry->pdirent, sizeof(dir_entry_t));
+			memcpy(pdirent,	pdir_entry->pdirent, sizeof(dir_entry_t));
 			pdir->cur_dir_entry++;
 
 			for (di = 1; di < pdir_entry->dirent_num; di++) {
@@ -423,7 +423,7 @@ dir_append_direntry(
 					pdirent = (dir_entry_t *)pdir->secbuf + pdir->cur_dir_entry;
 					ASSERT(pdirent->dir_name[0] == 0x00);
 
-					Memcpy(pdirent,
+					memcpy(pdirent,
 						pdir_entry->pdirent + di,
 						sizeof(dir_entry_t));
 					pdir->cur_dir_entry++;
@@ -436,7 +436,7 @@ dir_append_direntry(
 			ret = dir_write_sector(pdir);
 		}
 		else if (pdirent->dir_name[0] == 0xE5) {
-			Memcpy(pdirent, 
+			memcpy(pdirent, 
 				pdir_entry->pdirent, 
 				pdir_entry->dirent_num * sizeof(dir_entry_t));
 
@@ -491,10 +491,10 @@ dir_update_direntry(
 
 	pdst_entry = (dir_entry_t *)pdir->secbuf + pdir->cur_dir_entry - pdir_entry->dirent_num;
 
-	ASSERT(!Memcmp(pdst_entry[pdir_entry->dirent_num - 1].dir_name, 
+	ASSERT(!memcmp(pdst_entry[pdir_entry->dirent_num - 1].dir_name, 
 		pdir_entry->pdirent[pdir_entry->dirent_num - 1].dir_name, 11));
 
-	Memcpy(pdst_entry,
+	memcpy(pdst_entry,
 		pdir_entry->pdirent,
 		pdir_entry->dirent_num * sizeof(dir_entry_t));
 
@@ -521,7 +521,7 @@ _init_dot_dir(
 	}
 	dirent_set_clus(pdir_entry, clus);
 	ASSERT(pdir_entry->dirent_num == 1);
-	Memcpy(psecbuf, pdir_entry->pdirent, sizeof(dir_entry_t));
+	memcpy(psecbuf, pdir_entry->pdirent, sizeof(dir_entry_t));
 
 _release:
 	dirent_release(pdir_entry);
@@ -538,8 +538,8 @@ _initialize_dir(
 	int32 ret;
 	ubyte * secbuf;
 
-	secbuf = (ubyte *)Malloc(ptffs->pbs->byts_per_sec);
-	Memset(secbuf, 0, ptffs->pbs->byts_per_sec);
+	secbuf = (ubyte *)malloc(ptffs->pbs->byts_per_sec);
+	memset(secbuf, 0, ptffs->pbs->byts_per_sec);
 
 	if ((ret = fat_malloc_clus(ptffs->pfat, FAT_INVALID_CLUS, &new_clus)) == FAT_OK) {
 
@@ -562,7 +562,7 @@ _initialize_dir(
 	}
 
 _release:
-	Free(secbuf);
+	free(secbuf);
 	return ret;
 }
 
@@ -617,7 +617,7 @@ _parse_path(
 	}
 
 _release:
-	Free(duppath);
+	free(duppath);
 	_dir_destroy(pdir);
 
 	return dir_clus;
@@ -630,9 +630,9 @@ _dir_init(
 {
 	tdir_t * pdir;
 
-	pdir = (tdir_t *)Malloc(sizeof(tdir_t));
+	pdir = (tdir_t *)malloc(sizeof(tdir_t));
 	pdir->ptffs = ptffs;
-	pdir->secbuf = (ubyte *)Malloc(ptffs->pbs->byts_per_sec);
+	pdir->secbuf = (ubyte *)malloc(ptffs->pbs->byts_per_sec);
 	pdir->start_clus = clus;
 	pdir->cur_clus = clus;
 	pdir->cur_sec = 0;
@@ -641,8 +641,8 @@ _dir_init(
 	if (dir_read_sector(pdir) == DIR_OK) {
 		return pdir;
 	}
-	Free(pdir->secbuf);
-	Free(pdir);
+	free(pdir->secbuf);
+	free(pdir);
 	return NULL;
 }
 
@@ -650,7 +650,7 @@ static void
 _dir_destroy(
 	IN	tdir_t * pdir)
 {
-	Free(pdir->secbuf);
-	Free(pdir);
+	free(pdir->secbuf);
+	free(pdir);
 }
 

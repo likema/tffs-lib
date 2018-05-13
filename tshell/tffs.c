@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 enum {
     MAX_ARG_NUM    = 3,
@@ -292,6 +293,6 @@ int do_write(tffs_handle_t htffs, int argc, char* argv[])
         return -1;
     }
 
-    return 0;
+    return res;
 }
 /* vim: set ts=4 sw=4 sts=4 et: */

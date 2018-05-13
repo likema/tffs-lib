@@ -87,7 +87,7 @@ HAI_closedevice(
 	if (close(pdev->fd) < 0)
 		return ERR_HAI_CLOSE;
 
-	Free(pdev);
+	free(pdev);
 
 	return HAI_OK;
 }
